@@ -1,72 +1,92 @@
-import wx
 # this is the main window class for wx python
+import wx
+from pyfcm import FCMNotification
+
+def push_to_topic(key, topic, title, body, sound):
+    push_service = FCMNotification(api_key=key)
+    result = push_service.notify_topic_subscribers(topic_name=topic, message_body=body, message_title=title, sound=sound)
+    return result
+
 class UserInput(wx.Frame):
     def __init__(self, parent, title):
         super(UserInput, self).__init__(parent, title=title)
 
+        def onSubmitClicked(event):
+            print(body.Value)
+            result = push_to_topic(key=apiKey.Value, topic=topic.Value, title=notificationTitle.Value, body=body.Value, sound=sound.Value)
+            dialog = wx.MessageDialog(None, "Push sent with the following result." + str(result), "Message result", wx.OK | wx.ICON_INFORMATION )
+            dialog.ShowModal()
+
         # define the panel and the sizer for elements
         panel = wx.Panel(self)
-        box = wx.BoxSizer(wx.HORIZONTAL)
+        box = wx.BoxSizer(wx.VERTICAL)
 
-        # Add objects to left or right boxes. Labels on the left and text boxes on the right. This may change in the future ad labels and boxes are not always aligned.
-        leftBox = wx.BoxSizer(wx.VERTICAL)
-        rightBox = wx.BoxSizer(wx.VERTICAL)
 
 # starting to define the GUI elements
-        apiLabel = wx.StaticText(panel)
-        text = "API Key:"
-        apiLabel.SetLabel(text)
-        leftBox.Add(apiLabel)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        apilabel = wx.StaticText(panel)
+        text = "API Key"
+        apilabel.SetLabelText(text)
+        box.Add(apilabel)
         apiKey = wx.TextCtrl(panel)
-        text = ""
-        apiKey.SetLabelText(text)
-        rightBox.Add(apiKey)
-
-        titleLabel = wx.StaticText(panel)
-        text = "Notification Title:"
-        titleLabel.SetLabel(text)
-        leftBox.Add(titleLabel)
-        notificationTitle = wx.TextCtrl(panel)
-        text = "notification title:"
-        notificationTitle.SetLabel(text)
-        rightBox.Add(notificationTitle)
+        apiToolTip = wx.ToolTip("FCM API Key")
+        apiKey.SetToolTip(apiToolTip)
+        # text = "please type your API key:"
+        # apiKey(text)
+        box.Add(apiKey)
 
         topicLabel = wx.StaticText(panel)
-        text = "Notification Topic:"
-        topicLabel.SetLabel(text)
-        leftBox.Add(topicLabel)
+        topicLabel.SetLabelText("Notification Topic")
+        box.Add(topicLabel)
         topic = wx.TextCtrl(panel)
+        topicToolTip = wx.ToolTip("Notification Topic")
+        topic.SetToolTip(topicToolTip)
         text = ""
         topic.SetLabelText(text)
-        rightBox.Add(topic)
+        box.Add(topic)
+
+        titleLabel = wx.StaticText(panel)
+        text = "Notification title:"
+        titleLabel.SetLabelText(text)
+        box.Add(titleLabel)
+        notificationTitle = wx.TextCtrl(panel)
+        text = ""
+        titleToolTip = wx.ToolTip("Notification Title")
+        notificationTitle.SetLabel(text)
+        notificationTitle.SetToolTip(titleToolTip)
+        box.Add(notificationTitle)
 
         bodyLabel = wx.StaticText(panel)
-        text = "Notification Body"
-        bodyLabel.SetLabel(text)
-        leftBox.Add(bodyLabel)
+        bodyLabel.SetLabelText("Notification body")
+        box.Add(bodyLabel)
         body = wx.TextCtrl(panel,)
+        bodyToolTip = wx.ToolTip("Notification body")
+        body.SetToolTip(bodyToolTip)
         text = ""
         body.SetLabel(text)
-        rightBox.Add(body)
+        box.Add(body)
 
         soundLabel = wx.StaticText(panel)
-        text = "Sound:"
-        soundLabel.SetLabel(text)
-        leftBox.Add(soundLabel)
+        soundLabel.SetLabelText("Sound:")
+        box.Add(soundLabel)
         sound = wx.TextCtrl(panel)
+        soundToolTip = wx.ToolTip("Notification Sound")
+        sound.SetToolTip(soundToolTip)
         text = ""
         sound.SetLabel(text)
-        rightBox.Add(sound)
+        box.Add(sound)
 
-        box.Add(leftBox)
-        box.Add(rightBox)
+        submit = wx.Button(panel, -1, "Submit Push")
+        submit.Bind(wx.EVT_BUTTON, onSubmitClicked)
+        box.Add(submit)
 
         panel.SetSizer(box)
 
 
 
-
         self.Show()
+
+
 if __name__ == '__main__':
     app = wx.App()
     UserInput(None, title='fcmApp')
