@@ -12,7 +12,6 @@ class UserInput(wx.Frame):
         super(UserInput, self).__init__(parent, title=title)
 
         def onSubmitClicked(event):
-            print(body.Value)
             result = push_to_topic(key=apiKey.Value, topic=topic.Value, title=notificationTitle.Value, body=body.Value, sound=sound.Value)
             dialog = wx.MessageDialog(None, "Push sent with the following result." + str(result), "Message result", wx.OK | wx.ICON_INFORMATION )
             dialog.ShowModal()
