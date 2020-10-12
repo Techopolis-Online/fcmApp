@@ -8,10 +8,15 @@ def push_to_topic(key, topic, title, body, sound):
     return result
 
 class UserInput(wx.Frame):
-    def __init__(self, parent, title):
-        super(UserInput, self).__init__(parent, title=title)
+    def __init__(self, parent, title, style):
+        super(UserInput, self).__init__(parent, title=title, style=style)
 
         def onSubmitClicked(event):
+            if apiKey.Value == "":
+                dialog = wx.MessageDialog(None, "Please make sure that your API key is correctly entered. You can find this in the Google Services json file, or from the FCM dashboard.", "Form Error",
+                                          wx.OK | wx.ICON_INFORMATION)
+                dialog.ShowModal()
+                return
             result = push_to_topic(key=apiKey.Value, topic=topic.Value, title=notificationTitle.Value, body=body.Value, sound=sound.Value)
             dialog = wx.MessageDialog(None, "Push sent with the following result." + str(result), "Message result", wx.OK | wx.ICON_INFORMATION )
             dialog.ShowModal()
@@ -21,8 +26,7 @@ class UserInput(wx.Frame):
         box = wx.BoxSizer(wx.VERTICAL)
 
 
-# starting to define the GUI elements
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        # starting to define the GUI elements
         apilabel = wx.StaticText(panel)
         text = "API Key"
         apilabel.SetLabelText(text)
@@ -88,5 +92,5 @@ class UserInput(wx.Frame):
 
 if __name__ == '__main__':
     app = wx.App()
-    UserInput(None, title='fcmApp')
+    UserInput(None, title='fcmApp', style=wx.DEFAULT_DIALOG_STYLE)
     app.MainLoop()
